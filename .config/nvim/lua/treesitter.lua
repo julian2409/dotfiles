@@ -10,7 +10,10 @@ require('nvim-treesitter.configs').setup {
         "typescript",
         "go",
         "java",
-        "kotlin"
+        "kotlin",
+        "css",
+        "scss",
+        "html",
     },
 
     -- Install parsers synchronously (only applied to `ensure_installed`)

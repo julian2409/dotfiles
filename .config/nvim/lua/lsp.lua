@@ -24,13 +24,50 @@ require('mason-lspconfig').setup({
         "rust_analyzer",
         "jdtls",
         "lua_ls",
+        "cssls",
+        "html",
+        "volar",
     },
     handlers = {
+        function(server_name)
+            require('lspconfig')[server_name].setup({})
+        end,
         function(gopls)
             require('lspconfig')[gopls].setup({})
         end,
         function(lua_ls)
             require('lspconfig')[lua_ls].setup({})
+        end,
+        volar = function()
+            require('lspconfig').volar.setup({})
+        end,
+        tsserver = function()
+            local vue_typescript_plugin = require('mason-registry')
+            .get_package('vue-language-server')
+            :get_install_path()
+            .. '/node_modules/@vue/language-server'
+            .. '/node_modules/@vue/typescript-plugin'
+
+            require('lspconfig').tsserver.setup({
+                init_options = {
+                    plugins = {
+                        {
+                            name = "@vue/typescript-plugin",
+                            location = vue_typescript_plugin,
+                            languages = {'javascript', 'typescript', 'vue'}
+                        },
+                    }
+                },
+                filetypes = {
+                    'javascript',
+                    'javascriptreact',
+                    'javascript.jsx',
+                    'typescript',
+                    'typescriptreact',
+                    'typescript.tsx',
+                    'vue',
+                },
+            })
         end,
     },
 })
@@ -38,6 +75,7 @@ require('mason-lspconfig').setup({
 
 require("mason-tool-installer").setup({
     ensure_installed = {
-      "ktlint",
+        "ktlint",
     }
 })
+
