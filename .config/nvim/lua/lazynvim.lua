@@ -21,6 +21,30 @@ local plugins = {
     {'hrsh7th/cmp-nvim-lsp'},
     {'hrsh7th/nvim-cmp'},
     {'L3MON4D3/LuaSnip'},
+
+    {'WhoIsSethDaniel/mason-tool-installer.nvim'},
+    {
+        "stevearc/conform.nvim",
+        event = { "BufReadPre", "BufNewFile" },
+        config = function()
+            local conform = require("conform")
+
+            conform.setup({
+                formatters_by_ft = {
+                    lua = { "stylua" },
+                    kotlin = { "ktlint" },
+                },
+            })
+
+            vim.keymap.set({ "n", "v" }, "<leader>l", function()
+                conform.format({
+                    lsp_fallback = true,
+                    async = false,
+                    timeout_ms = 1000,
+                })
+            end, { desc = "Format file or range (in visual mode)" })
+        end,
+    },
 }
 
 if not (vim.uv or vim.loop).fs_stat(lazypath) then

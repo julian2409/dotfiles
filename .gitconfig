@@ -1,3 +1,5 @@
 [user]
 	name = Julian Schallenmueller
 	email = 29258884+julian2409@users.noreply.github.com
+[defaultbranch]
+  name = main

@@ -15,6 +15,8 @@ alias ll="ls -al"
 # kubectl
 alias -g k="kubectl"
 
+alias nv="nvim"
+
 autoload -Uz compinit
 fpath=(~/.zsh/completion $fpath)
 compinit -i

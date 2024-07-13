@@ -16,15 +16,28 @@ require("mason").setup({
     }
 })
 
+
 require('mason-lspconfig').setup({
     ensure_installed = {
         "gopls",
         "tsserver",
         "rust_analyzer",
+        "jdtls",
+        "lua_ls",
     },
     handlers = {
         function(gopls)
             require('lspconfig')[gopls].setup({})
         end,
+        function(lua_ls)
+            require('lspconfig')[lua_ls].setup({})
+        end,
     },
+})
+
+
+require("mason-tool-installer").setup({
+    ensure_installed = {
+      "ktlint",
+    }
 })
