@@ -22,11 +22,12 @@ require('mason-lspconfig').setup({
         "gopls",
         "tsserver",
         "rust_analyzer",
-        "jdtls",
         "lua_ls",
         "cssls",
         "html",
         "volar",
+        "jdtls",
+        "kotlin_language_server",
     },
     handlers = {
         function(server_name)

@@ -54,6 +54,7 @@ local plugins = {
         -- this is equalent to setup({}) function
     },
     {'windwp/nvim-ts-autotag'},
+    {'mfussenegger/nvim-jdtls'},
 }
 
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
