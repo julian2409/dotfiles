@@ -13,6 +13,7 @@ local plugins = {
         build = ":TSUpdate"
     },
     {'tanvirtin/monokai.nvim'},
+    {'catppuccin/nvim', name = 'catppuccin'},
     {
         'VonHeikemen/lsp-zero.nvim',
         branch = 'v3.x'
@@ -45,6 +46,14 @@ local plugins = {
             end, { desc = "Format file or range (in visual mode)" })
         end,
     },
+    {
+        'windwp/nvim-autopairs',
+        event = "InsertEnter",
+        config = true
+        -- use opts = {} for passing setup options
+        -- this is equalent to setup({}) function
+    },
+    {'windwp/nvim-ts-autotag'},
 }
 
 if not (vim.uv or vim.loop).fs_stat(lazypath) then

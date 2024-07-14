@@ -35,8 +35,8 @@ require('mason-lspconfig').setup({
         function(gopls)
             require('lspconfig')[gopls].setup({})
         end,
-        function(lua_ls)
-            require('lspconfig')[lua_ls].setup({})
+        function()
+            require('lspconfig').lua_ls.setup({})
         end,
         volar = function()
             require('lspconfig').volar.setup({})

@@ -5,3 +5,6 @@ require("colorscheme")
 require("set")
 require("telescope")
 require("treesitter")
+require("autotag")
+
+vim.cmd("language en_US")
