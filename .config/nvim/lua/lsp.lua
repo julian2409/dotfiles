@@ -28,6 +28,9 @@ require('mason-lspconfig').setup({
         "volar",
         "jdtls",
         "kotlin_language_server",
+        "terraformls",
+        "dockerls",
+        "bashls",
     },
     handlers = {
         function(server_name)

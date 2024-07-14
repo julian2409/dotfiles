@@ -7,4 +7,4 @@ require("telescope")
 require("treesitter")
 require("autotag")
 
-vim.cmd("language en_US")
+-- vim.cmd("language en_US")
