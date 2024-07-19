@@ -4,7 +4,7 @@
 
 require('catppuccin').setup({
     flavour = "mocha",
-    italics = false,
+    no_italic = true,
 })
 
 vim.cmd.colorscheme "catppuccin"
