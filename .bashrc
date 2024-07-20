@@ -98,6 +98,7 @@ alias tf='terraform'
 alias sysup='sudo apt update && sudo apt -y upgrade && sudo snap refresh'
 
 alias nv="nvim"
+alias q="quarkus"
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
