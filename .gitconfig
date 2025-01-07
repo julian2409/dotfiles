@@ -1,3 +1,18 @@
 [user]
-	name = Julian Schallenmueller
-	email = 29258884+julian2409@users.noreply.github.com
+    name = Julian Schallenmueller
+    email = jsa@novatec-gmbh.de
+[core]
+    autocrlf = input
+    editor = vi
+[init]
+    defaultBranch = main
+[includeIf "gitdir:/home/julian/hobby_projects/"]
+    path = /home/julian/.gitconfig-private
+[alias]
+    br = branch
+    co = checkout
+    ci = commit
+    st = status
+[credential "https://git.t3.daimlertruck.com"]
+    helper = 
+    helper = !/usr/bin/gh auth git-credential

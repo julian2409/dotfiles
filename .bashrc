@@ -16,8 +16,8 @@ HISTCONTROL=ignoreboth
 shopt -s histappend
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=1000
-HISTFILESIZE=2000
+HISTSIZE=5000
+HISTFILESIZE=10000
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -91,11 +91,18 @@ fi
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
+alias cd..='cd ..'
 
+# kubectl and microk8s aliases
 alias k='kubectl'
-alias tf='terraform'
+alias mk='microk8s kubectl'
+alias m='microk8s'
 
-alias sysup='sudo apt update && sudo apt -y upgrade && sudo snap refresh'
+# terraform alias
+alias tf='terraform'
+alias tff='terraform fmt -recursive'
+
+alias sysup='sudo snap refresh && sudo apt update && sudo apt -y upgrade'
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
@@ -121,33 +128,184 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# Add node to path
-export PATH="/opt/node-v16.14.0-linux-x64/bin:$PATH"
+# Set up JAVA_HOME
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 
-# Add GoLang
-export GOPATH=$HOME/go
-export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
+# Add maven to path
+export PATH=$PATH:/opt/apache-maven-3.8.6/bin
 
-# Set JAVA_HOME
-export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64/
+# Add gradle to path
+export PATH=$PATH:/opt/gradle-7.5.1/bin
 
-# Terraform autocomplete
-complete -C /usr/bin/terraform terraform
+# Add xentry-aws-azure-login to path
+export PATH=$PATH:/home/julian/.xentry-aws-azure-login
 
-# Setup AWS for Terraform
-export AWS_ACCESS_KEY_ID="AKIA4BGA6FBY3EDTK37A"
-export AWS_SECRET_ACCESS_KEY="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"
+# Setup 256 color on terminal for k9s
+export TERM=xterm-256color
 
-# Load Angular CLI autocompletion.
-source <(ng completion script)
-
-# Set Editor for Git to Vim
-export GIT_EDITOR=vim
-
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="$HOME/.sdkman"
-[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+# Add k9s to path
+export PATH=$PATH:/opt/k9s
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# Add autocompletion to aws-cli
+export PATH=$PATH:/usr/local/aws-cli/v2/2.7.15/bin/aws_completer
+
+# Add go to path
+export PATH=$PATH:/usr/local/go/bin
+
+# Add lazygit to path
+export PATH=$PATH:/home/julian/go/bin/
+
+# Add GO install directory to path
+export PATH=$PATH:/home/julian/go/bin/hello
+
+# Function to make and change to dir in one step
+mkchdir() {
+	if [[ -d $1 ]]
+	then
+		echo directory $1 already exists
+		return -1
+	fi	
+	mkdir $1
+	cd $1
+}
+
+complete -C /usr/bin/terraform terraform
+. "$HOME/.cargo/env"
+
+# Install Ruby Gems to ~/gems
+export GEM_HOME="$HOME/gems"
+export PATH="$HOME/gems/bin:$PATH"
+
+function aws-power-login {
+  
+  function find_profiles() {
+    local search_str="$1"
+    cat $HOME/.aws/config | grep "\[.*${search_str}.*\]" | sed -e 's/\[//' -e 's/\]//'
+  }
+  
+  function show_commands() {
+    echo "Available commands:"
+    echo "1. Login all necessary accounts for profile"
+    echo "2. Recreate kubeconfig for profile"
+    echo "Q. Quit"
+  }
+  
+  function exporting_profile() {
+    export AWS_PROFILE=${profile}
+  }
+  
+  function submenu() {
+    local profile="$1"
+    while true; do
+      echo "Profile: $profile"
+      show_commands
+      read -p "Choose a command (1-2, or Q to quit): " command_choice
+      case $command_choice in
+        1)
+          AWS_PROFILE="$profile" echo "login into genesis-network-tasp account"
+                                 dt-aws-aad-sso login -p genesis-network-tasp > /dev/null 2>&1 
+                                 echo "login into $profile account"
+                                 dt-aws-aad-sso login -p $profile > /dev/null 2>&1
+                                 echo "login into shared service docker and helm registry"
+                                 aws ecr get-login-password --region eu-central-1 --profile $profile | \
+                                 docker login --username AWS --password-stdin 621933005814.dkr.ecr.eu-central-1.amazonaws.com > /dev/null 2>&1
+                                 aws ecr get-login-password --region eu-central-1 --profile $profile | \
+                                 helm registry login --username AWS --password-stdin 621933005814.dkr.ecr.eu-central-1.amazonaws.com > /dev/null 2>&1
+          ;;
+        2)
+          AWS_PROFILE="$profile" read -p "Enter cluster: " cluster_choice
+                                 cluster=$(printf $profile | awk -F'-' '{print $NF}')
+                                 #dt-aws-aad-sso login -p $profile -c $cluster > /dev/null 2>&1
+                                 dt-aws-aad-sso login -p $profile -c $cluster_choice > /dev/null 2>&1
+          ;;
+    [Qq]*)
+          echo "exporting AWS_PROFILE"
+          exporting_profile
+          break_out=true 
+          break
+          ;;
+        *)
+          echo "Invalid choice. Please try again."
+          ;;
+      esac
+    done
+  }
+  
+  function main_menu() {
+    break_out=false    
+    while [[ ${break_out} != "true" ]]; do
+      read -p "Enter a search string (or Q to quit): " search_str
+        if [[ "$search_str" =~ ^[Qq].* ]]; then
+          break
+        fi
+      local profiles=( $(find_profiles "$search_str") )
+        if [[ ${#profiles[@]} -eq 0 ]]; then
+          echo "No matching profiles found. Please try again."
+          continue
+        fi
+      echo "Matching profiles:"
+        for i in "${!profiles[@]}"; do
+          echo "$((i+1)). ${profiles[$i]}"
+        done
+      echo "Q. Quit"
+      read -p "Choose a profile (1-${#profiles[@]}, or Q to quit): " profile_choice
+        if [[ "$profile_choice" =~ ^[Qq].* ]]; then
+          break_out=true
+        elif ((profile_choice >= 1 && profile_choice <= ${#profiles[@]})); then
+          submenu "${profiles[$((profile_choice-1))]}"
+        else
+          echo "Invalid choice. Please try again."
+        fi
+    done
+  }
+  
+  main_menu
+}
+
+# bash parameter completion for the dotnet CLI
+
+function _dotnet_bash_complete()
+{
+  local cur="${COMP_WORDS[COMP_CWORD]}" IFS=$'\n' # On Windows you may need to use use IFS=$'\r\n'
+  local candidates
+
+  read -d '' -ra candidates < <(dotnet complete --position "${COMP_POINT}" "${COMP_LINE}" 2>/dev/null)
+
+  read -d '' -ra COMPREPLY < <(compgen -W "${candidates[*]:-}" -- "$cur")
+}
+
+complete -f -F _dotnet_bash_complete dotnet
+
+#Increase history file size
+export HISTSIZE=10000
+export HISTFILESIZE=10000
+
+# Load Angular CLI autocompletion.
+source <(ng completion script)
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH=$BUN_INSTALL/bin:$PATH
+
+# pnpm
+export PNPM_HOME="/home/julian/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+# Initialize Pyenv
+export PATH="$HOME/.pyenv/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
+. "/home/julian/.deno/env"
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
