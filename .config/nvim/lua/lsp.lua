@@ -31,6 +31,7 @@ require('mason-lspconfig').setup({
         "dockerls",
         "bashls",
         "pylsp",
+        "clangd",
     },
     handlers = {
         function(server_name)
@@ -79,7 +80,9 @@ require('mason-lspconfig').setup({
         function()
             require('pylsp').pylsp.setup({})
         end,
-
+        function()
+            require('clangd').clangd.setup({})
+        end,
 
     },
 })
