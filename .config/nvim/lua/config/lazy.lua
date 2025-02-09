@@ -50,7 +50,7 @@ require("lazy").setup({
     install = { colorscheme = { "habamax" } },
     -- automatically check for plugin updates
     checker = { enabled = true },
-    ui = vim.g.have_nerd_font and {} or {
+    ui = jit.os ~= "OSX" and {} or {
         icons = {
             cmd = "⌘",
             config = "🛠",
