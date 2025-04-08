@@ -14,5 +14,4 @@
     ci = commit
     st = status
 [credential "https://git.t3.daimlertruck.com"]
-    helper = 
     helper = !/usr/bin/gh auth git-credential

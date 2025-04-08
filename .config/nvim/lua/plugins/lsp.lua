@@ -12,6 +12,7 @@ return {
                     'clangd',
                     'cssls',
                     'dockerls',
+                    'emmet_language_server',
                     'gopls',
                     'groovyls',
                     'html',
@@ -26,6 +27,12 @@ return {
                 handlers = {
                     function(server_name)
                         require('lspconfig')[server_name].setup({})
+                    end,
+
+                    emmet_language_server = function()
+                        require('lspconfig').emmet_language_server.setup({
+                            filetypes = { "css", "eruby", "html", "javascript", "javascriptreact", "less", "sass", "scss", "pug", "typescriptreact", "vue", },
+                        })
                     end,
 
                     ts_ls = function()
