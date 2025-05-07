@@ -1,7 +1,6 @@
 return {
     {
-        'williamboman/mason.nvim',
-        version = "^1",
+        'mason-org/mason.nvim',
         opts = {},
     },
     {
@@ -39,11 +38,11 @@ return {
                     end,
 
                     ts_ls = function()
-                        local vue_typescript_plugin = require('mason-registry')
-                        .get_package('vue-language-server')
-                        :get_install_path()
-                        .. '/node_modules/@vue/language-server'
-                        .. '/node_modules/@vue/typescript-plugin'
+                        -- TODO: get mason packages location dynamically
+                        local vue_typescript_plugin = '/home/jsa/.local/share/nvim/mason/packages/'
+                            .. '/vue-language-server'
+                            .. '/node_modules/@vue/language-server'
+                            .. '/node_modules/@vue/typescript-plugin'
 
                         require('lspconfig').ts_ls.setup({
                             init_options = {
