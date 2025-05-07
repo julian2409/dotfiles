@@ -1,10 +1,13 @@
 return {
     {
         'williamboman/mason.nvim',
+        version = "^1",
         opts = {},
     },
     {
         'williamboman/mason-lspconfig.nvim',
+        -- Need upgrade to nvim 0.11 for v2
+        version = "^1",
         opts = function()
             require('mason-lspconfig').setup({
                 ensure_installed = {
