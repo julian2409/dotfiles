@@ -4,6 +4,8 @@ Some dotfile configurations
 
 ## Prerequisites for .config/nvim
 
+- build-essential or equivalent
+- fzf
 - go
 - python3-venv
 - nodejs + npm
